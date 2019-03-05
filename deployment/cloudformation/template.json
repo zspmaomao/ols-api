@@ -1,0 +1,70 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "This is for deploying ols-api",
+  "Parameters": {
+    "ApplicationName": {
+      "Default": "ols-api",
+      "Description": "Elastic Beanstalk Application Name.",
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "EbApplication": {
+      "Type": "AWS::ElasticBeanstalk::Application",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "ApplicationName"
+        },
+        "Description": ""
+      }
+    },
+    "EbApplicationVersion": {
+      "Type": "AWS::ElasticBeanstalk::ApplicationVersion",
+      "Properties": {
+        "SourceBundle": "../../",
+        "ApplicationName": {
+          "Ref": "ApplicationName"
+        },
+        "Description": "AWS ElasticBeanstalk Sample Application Version"
+      },
+      "DependsOn": "EbApplication"
+    },
+    "EbEnvironment": {
+      "Type": "AWS::ElasticBeanstalk::Environment",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "ApplicationName"
+        },
+        "Description": "",
+        "EnvironmentName": "ols-api",
+        "SolutionStackName": "64bit Amazon Linux 2018.03 v2.12.6 running Docker 18.06.1-ce",
+        "OptionSettings": [
+          {
+            "Namespace": "aws:elasticbeanstalk:environment",
+            "OptionName": "EnvironmentType",
+            "Value": "SingleInstance"
+          },
+          {
+            "Namespace": "aws:autoscaling:launchconfiguration",
+            "OptionName": "InstanceType",
+            "Value": "t2.micro"
+          },
+          {
+            "Namespace": "aws:autoscaling:launchconfiguration",
+            "OptionName": "EC2KeyName",
+            "Value": "beijing-tw-nho-key-pair"
+          },
+          {
+            "Namespace": "aws:autoscaling:launchconfiguration",
+            "OptionName": "IamInstanceProfile",
+            "Value": "aws-elasticbeanstalk-ec2-role"
+          }
+        ],
+        "VersionLabel": {
+          "Ref": "EbApplicationVersion"
+        }
+      },
+      "DependsOn": "EbApplicationVersion"
+    }
+  }
+}

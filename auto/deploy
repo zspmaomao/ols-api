@@ -1,0 +1,26 @@
+#!/bin/bash -e
+cd $(dirname $0)/..
+
+ORIGINAL_TEMPLATE_PATH=./deployment/cloudformation/template.json
+COMPILED_TEMPLATE_PATH=./deployment/cloudformation/compiled-template.json
+
+AWS_REGION=cn-north-1
+STACK_NAME=ols-api
+S3_BUCKET=beijing-nho-deployment
+
+./gradlew clean
+./gradlew bootJar
+
+aws cloudformation package \
+    --region $AWS_REGION \
+	--template-file $ORIGINAL_TEMPLATE_PATH \
+	--output-template-file $COMPILED_TEMPLATE_PATH \
+	--s3-bucket $S3_BUCKET \
+	--s3-prefix $STACK_NAME \
+    --use-json
+
+aws cloudformation deploy \
+    --region $AWS_REGION \
+    --stack-name $STACK_NAME \
+    --template-file $COMPILED_TEMPLATE_PATH \
+    --capabilities CAPABILITY_IAM
