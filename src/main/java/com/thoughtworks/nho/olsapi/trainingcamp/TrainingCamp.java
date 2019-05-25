@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import java.time.Instant;
 
 @Entity
-public class TariningCamp {
+public class TrainingCamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
